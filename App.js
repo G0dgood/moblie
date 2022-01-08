@@ -1,21 +1,53 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import Login from './app/screens/Login';
 
-export default function App() {
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, FlatList, Alert } from 'react-native';
+import Header from './app/compotents/Header';
+import AddItems from './app/compotents/AddItems';
+import { v4 as uuidv4 } from "uuid";
+import ListItem from './app/compotents/ListItem';
+
+const App = () => {
+
+  const [items, setItems] = useState([
+    { id: uuidv4(), text: 'Milk' },
+    { id: uuidv4(), text: 'Egg' },
+    { id: uuidv4(), text: 'Bread' },
+    { id: uuidv4(), text: 'Juice' },
+
+  ]);
+
+  const deleteItem = (id) => {
+    setItems(prevItems => {
+      return prevItems.filter(item => item.id != id);
+    });
+  }
+
+  const addItem = (text) => {
+    if (!text) {
+      Alert.alert('Error', 'Please enter an item', { text: 'OK' })
+    } else {
+
+      setItems(prevItems => {
+        return [{ id: uuidv4(), text }, ...prevItems];
+      });
+    }
+
+  }
+
   return (
-    // <View style={styles.container}>
+    <View style={styles.container}>
+      <Header title='Shopping List' />
+      <AddItems addItem={addItem} />
+      <FlatList data={items} renderItem={({ item }) => <ListItem item={item} deleteItem={deleteItem} />} />
 
-    // </View>
-    <Login />
+    </View>
   );
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
+export default App;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 60,
+  },
+});
